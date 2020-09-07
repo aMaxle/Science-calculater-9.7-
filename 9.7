@@ -1,0 +1,472 @@
+#include <iostream>
+#include <cstring>
+#include <cmath>
+
+using namespace std;
+
+int bi[32]={0};
+int octal[11] = {0};
+char hexa[8] = {0};
+
+void DecToBinary(int a){     // 十进制转二进制值
+    int j=1;
+    int cmpNum;
+    if(a<0){
+        int leap=1;
+        a = abs(a);
+        bi[0] = 1;
+        for (int i = 30; i >=0;i--){
+            cmpNum = pow(2, i);
+            if(a>=cmpNum){
+                bi[j]= 1;
+                a = a - cmpNum;
+                j++;
+            }
+            else if(a<cmpNum&&a>=0){
+                bi[j] = 0;
+                j++;
+            }
+        }
+        for(int i=31;i>0;i--){
+            if(leap){
+                if(bi[i]==0)
+                    continue;
+                else {
+                    leap = 0;
+                    continue;
+                }
+            }
+            else{
+                if(bi[i] == 1)
+                    bi[i] = 0;
+                else 
+                    bi[i] = 1;
+            }
+        }
+    }
+    else if(a>=0){
+        bi[0] = 0;
+        for (int i = 30; i >=0;i--){
+            cmpNum = pow(2, i);
+            if(a>=cmpNum){
+                bi[j] = 1;
+                a = a - cmpNum;
+                j++;
+            }
+            else if(a<cmpNum&&a>=0){
+                bi[j] = 0;
+                j++;
+            }
+        }
+    }
+}
+
+void printBinary(int x[]){   // 打印二进制值
+    if(x[0]==1){
+        for(int i=0;i<32;i++){
+            cout<<x[i];
+            if(i==7||i==15||i==23)
+                cout<<' ';
+        }
+    }
+    else{
+        int leap = 1;
+        for(int i=0;i<32;i++){
+            if(x[i]==0&&leap){
+                leap = 1;
+                continue;
+            }
+            else{
+                leap = 0;
+                cout<<x[i];
+            }
+        }
+    }
+    cout<<endl;
+}
+
+void BiToOct(int x[]){
+    int m = 10, sum = 0, k = 0;
+    for(int i=31;i>=0;i--){
+        sum += x[i] * pow(2, k);
+        if(i==0)
+            octal[m] = sum;
+        k++;
+        if(k==3){
+            k = 0;
+            octal[m] = sum;
+            m--;
+            sum = 0;
+        }
+    }
+    cout << "八进制值：";
+    if(x[0]==1){
+        for (int i = 0; i < 11;i++){
+            cout << octal[i];
+        }
+    }
+    else{
+        for (int i = 0; i < 11;i++){
+            if(octal[i]==0)
+                continue;
+            else
+                cout << octal[i];
+        }
+    }
+    cout << endl;
+}
+
+int BiToDec(int x[]){
+    int sum = 0, k = 0;
+    for(int i=31;i>=0;i--){
+        sum += x[i] * pow(2, k);
+        k++;
+    }
+    return sum;
+}
+
+int OctToDec(char x[]){
+    int j = 10 , decNum = 0 , k = 0;
+    for (int i = 10; i >= 0;i--){
+        if(x[i]){
+            decNum += (x[i] - '0') * pow(8, k);
+            k++;
+            j--;
+        }
+    }
+    return decNum;
+}
+
+int HexToDec(char x[]){     // 十六进制转十进制的值
+    int num = 0;
+    int j = 0;
+    for (int i = 9; i >= 2;i--){
+        if(x[i]>'9'){
+            switch(x[i]){
+                case 'a':
+                    num += 10 * pow(16,j);
+                    break;
+                case 'A':
+                    num += 10 * pow(16,j);
+                    break;
+                case 'b':
+                    num += 11 * pow(16,j);
+                    break;
+                case 'B':   
+                    num += 11 * pow(16,j);
+                    break;
+                case 'c':
+                    num += 12 * pow(16,j);
+                    break;
+                case 'C':
+                    num += 12 * pow(16,j);
+                    break;
+                case 'd':
+                    num += 13 * pow(16,j);
+                    break;
+                case 'D':
+                    num += 13 * pow(16,j);
+                    break;
+                case 'e':
+                    num += 14 * pow(16,j);
+                    break;
+                case 'E':
+                    num += 14 * pow(16,j);
+                    break;
+                case 'f':
+                    num += 15 * pow(16,j);
+                    break;
+                case 'F':
+                    num += 15 * pow(16,j);
+                    break;
+            }
+            j++;
+        }
+        else if(x[i]>='0'&&x[i]<='9'){
+            num += (x[i] - '0') * pow(16,j);
+            j++;
+        }
+    }
+    return num;
+}
+
+void BiToHex(int x[]){
+    memset(hexa, '0', sizeof(hexa));
+	int m = 7, sum = 0, k = 0;
+    for(int i=31;i>=0;i--){
+        sum += bi[i] * pow(2, k);
+        k++;
+        if(k==4){
+            k = 0;
+            if(sum>9){
+                switch(sum){
+                    case 10:hexa[m]='A';
+                    break;
+                    case 11:hexa[m]='B';
+                    break;
+                    case 12:hexa[m]='C';
+                    break;
+                    case 13:hexa[m]='D';
+                    break;
+                    case 14:hexa[m]='E';
+                    break;
+                    case 15:hexa[m]='F';
+                }
+            }
+            else
+                hexa[m] = sum+'0';
+            m--;
+            sum = 0;
+        }
+    }
+    if(x[0]==1){
+        for (int i = 0; i < 8;i++){
+            cout << hexa[i];
+        }
+    }
+    else if(x[0]==0){
+        for (int i = 0; i < 8;i++){
+            if(hexa[i]=='0')
+                continue;
+            cout << hexa[i];
+        }
+    }
+    cout << endl;
+} 
+
+int main(){
+    char x[100]={0};
+    int y1,bot,numDec=0,count=0;
+    cout << "=====================================================================" << endl;
+    //while(1){
+        cout <<"                           请选择功能" << endl;
+        cout << "1.进制转换" << "     " << "2.进制四则运算" << "     " << "3.科学计算器" << "     " <<"0.退出程序"<< endl;
+        cin >> y1;
+        if (y1 == 1){
+    //        while(1){
+    //            if(bot==2)
+    //                break;
+                cout << "请输入数字：";
+                cin >> x;
+                if ((x[0] == '0' && x[1] == 'x')||(x[0] == '0' && x[1] == 'X')){    // 十六进制
+                    cout << "此数字是十六进制值" << endl;
+                    int decNum = HexToDec(x);
+                    DecToBinary(decNum);
+                    cout << "二进制值：";
+                    printBinary(bi);
+                    BiToOct(bi);
+                    cout << "十进制值：" << decNum << endl;
+                }
+                else if(x[0]=='0'){
+                    cout << "此数字是八进制值" << endl;
+                    int decNum = OctToDec(x);
+                    DecToBinary(decNum);
+                    cout << "二进制值：";
+                    printBinary(bi);
+                    cout << "十进制值：" << decNum << endl;
+                    cout << "十六进制值：0x";
+                    BiToHex(bi);
+                }
+                else{
+                    int leap = 0;
+                    if(x[0]=='-'){
+                        leap = 1;
+                    }
+                    for (int i = 99; i >= 0;i--){
+                        if(x[i]=='-')
+                            continue;
+                        if(x[i]){
+                            numDec += (x[i] - '0') * pow(10, count);
+                            count++;
+                        }
+                    }
+                    if(leap)
+                        numDec = - numDec;
+                    cout << "此数字是十进制值" << endl;
+                    DecToBinary(numDec);
+                    cout << "二进制值：";
+                    printBinary(bi);
+                    BiToOct(bi);
+                    cout << "十六进制值：0x";
+                    BiToHex(bi);
+                }
+                memset(bi, 0 , sizeof(bi));
+                memset(octal, 0 , sizeof(octal));
+                memset(hexa, 0, sizeof(hexa));
+                cout << "是否继续计算？ 1. 是            2.返回" << endl;
+    //            cin >> bot; 
+        }
+        else if (y1 == 2){
+            int y2;
+            cout << "请选择需要运算的进制：" << endl;
+            cout << "1.二进制四则运算" << endl;
+            cout << "2.十进制四则运算" << endl;
+            cout << "3.十六进制四则运算" << endl;
+            cout << "0.上一步" << endl;
+            cin >> y2;
+            if(y2==1){
+                int j = 31,result=0,leap=1;
+                char Num[32] = {0},sign;
+                int biNum[32] = {0}, decNum;
+                cout << "请输入数字：(在输入符号处输入0结束运算)" << endl;
+                while(1){
+                    memset(Num, 0, sizeof(Num));
+                    memset(biNum, 0, sizeof(biNum));
+                    cin >> Num;
+                    for (int i = 31; i >= 0;i--){
+                        if(Num[i]) {
+                            biNum[j] = Num[i] - '0';
+                            j--;
+                        }
+                    }
+                    j = 31;
+                    decNum = BiToDec(biNum);
+                    if(leap)
+                        result = decNum;
+                    if(!leap){
+                        switch(sign){
+                        case '+':
+                            result += decNum;
+                            break;
+                        case '-':
+                            result -= decNum;
+                            break;
+                        case '*':
+                            result *= decNum;
+                            break;
+                        case '/':
+                            result /= decNum;
+                            break;
+                    }
+                    }
+                    cout << "请输入运算符号（+、-、*、/）：" << endl;
+                    cin >> sign;
+                    if(leap){
+                        cout << "请输入数字：" << endl;
+                        leap = 0;
+                        continue;
+                    }
+                    if(!leap)
+                        cout << "请输入数字：" << endl;
+                    if(sign=='0')
+                        break;
+                }
+                cout << "结果是：" ;
+                DecToBinary(result);
+                printBinary(bi);
+            }
+            else if(y2==2){
+                int leap = 1 ;
+                char sign;
+                double result=0,decNum;
+                cout << "请输入数字：(在输入符号处输入0结束运算)" << endl;
+                while(1){
+                    cin >> decNum;
+                    if(leap)
+                        result = decNum;
+                    if(!leap){
+                        switch(sign){
+                        case '+':
+                            result += decNum;
+                            break;
+                        case '-':
+                            result -= decNum;
+                            break;
+                        case '*':
+                            result *= decNum;
+                            break;
+                        case '/':
+                            result /= decNum;
+                            break;
+                        }
+                    }
+                    cout << "请输入运算符号（+、-、*、/）：" << endl;
+                    cin >> sign;
+                    if(leap){
+                        cout << "请输入数字：" << endl;
+                        leap = 0;
+                        continue;
+                    }
+                    if(!leap)
+                        cout << "请输入数字：" << endl;
+                    if(sign=='0')
+                        break;
+                }
+                cout << "结果是：" << result << endl;
+            }
+            else if(y2==3){
+                int result=0,leap=1;
+                char Num[10] = {0},sign;
+                int  decNum;
+                cout << "请输入数字：(在输入符号处输入0结束运算)" << endl;
+                while(1){
+                    cin >> Num;
+                    decNum = HexToDec(Num);
+                    if(leap)
+                        result = decNum;
+                    if(!leap){
+                        switch(sign){
+                        case '+':
+                            result += decNum;
+                            break;
+                        case '-':
+                            result -= decNum;
+                            break;
+                        case '*':
+                            result *= decNum;
+                            break;
+                        case '/':
+                            result /= decNum;
+                            break;
+                        }
+                    }
+                    cout << "请输入运算符号（+、-、*、/）：" << endl;
+                    cin >> sign;
+                    if(leap){
+                        cout << "请输入数字：" << endl;
+                        leap = 0;
+                        continue;
+                    }
+                    if(!leap)
+                        cout << "请输入数字：" << endl;
+                    if(sign=='0')
+                        break;
+                }
+                DecToBinary(result);
+                cout << "结果是：0x";
+                BiToHex(bi);
+            }
+            memset(bi, 0 , sizeof(bi));
+            memset(hexa, 0, sizeof(hexa));
+        }
+        else if (y1 == 3){
+            int y3;
+            cout << "请输入需要运算的类型：" << endl;
+            cout << "1.对数、幂运算，三角函数计算" << endl;
+            cout << "2.任意两个进制数字之间比较运算" << endl;
+            cout << "3.公约数，最小公倍数计算" << endl;
+            cout << "4.一元一次函数、反比例函数、一元二次函数、指数对数函数运算" << endl;
+            cout << "0.返回上一步"<< endl;
+            cin >> y3;
+            if(y3==1){
+                cin >> x;
+            }
+            else if(y3==2){
+
+            }
+            else if(y3==3){
+                
+            }
+            else if(y3==4){
+                
+            }
+        }
+        else if (y1 == 0){
+
+        }
+    //        break;
+    cout << "=====================================================================";
+
+
+    return 0;
+}
